@@ -162,7 +162,7 @@ app.post('/register', function (req, res) {
 })
 
 //Create Patient
-app.post('/createPatient', function (req, res) {
+app.post('/Patients', function (req, res) {
   // console.log("_dirnamee is:"+__dirname)
   // console.log("filename is:"+__filename)
   console.log('POST request: login params=>' + JSON.stringify(req.params));
