@@ -39,16 +39,9 @@ db.once("open", function () {
   console.log("!!!! Connected to db: " + uristring);
 });
 
-const userSchema = new mongoose.Schema({
+const loginSchema = new mongoose.Schema({
   username: String,
-  password: String,
-  occupation: String,
-  dateOfBirth: String,
-  emailAddress: String,
-  phoneNumber: String,
-  imageUri: String,
-  imageType: String,
-  imageName: String,
+  password: String
 });
 
 const patientSchema = new mongoose.Schema({
@@ -68,22 +61,8 @@ const patientSchema = new mongoose.Schema({
   photo: String,
 })
 
-const appointmentSchema = new mongoose.Schema({
-  patientName: String,
-  address: String,
-  doctorID: String,
-  phoneNumber: String,
-  emailAddress: String,
-  appointmentTime: String,
-  patientSymptom: String,
-  imageUri: String,
-  imageType: String,
-  imageName: String,
-});
-
-var User = mongoose.model("User", userSchema);
+var Login = mongoose.model("Login", loginSchema);
 var Patient = mongoose.model("Patient", patientSchema);
-var Appointment = mongoose.model("Appointment", appointmentSchema);
 
 if (typeof ipaddress === "undefined") {
   //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -102,69 +81,10 @@ var server = app.listen(app.get("port"), function () {
 
   var host = server.address().address;
   var port = server.address().port;
-
-  console.log("应用实例，访问地址为 http://%s:%s", host, port);
 });
 
 app.get("/", function (req, res) {
   res.send("Hello World");
-});
-
-//User Register
-app.post("/register", function (req, res) {
-  // console.log("_dirnamee is:"+__dirname)
-  // console.log("filename is:"+__filename)
-  console.log("POST request: login params=>" + JSON.stringify(req.params));
-  console.log("POST request: login body=>" + JSON.stringify(req.body));
-  // Make sure name is defined
-  if (req.body.username === undefined) {
-    // If there are any errors, pass them to next in the correct format
-    throw new Error("username cannot be empty");
-  }
-  if (req.body.password === undefined) {
-    // If there are any errors, pass them to next in the correct format
-    throw new Error("password cannot be empty");
-  }
-
-  //upload image
-  var des_file = "resources/userImage/" + req.body.username + ".jpg";
-  fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
-    fs.writeFile(des_file, data, function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Success!");
-      }
-    });
-  });
-
-  // Creating new user.
-  var newUser = new User({
-    username: req.body.username,
-    password: req.body.password,
-    occupation: req.body.occupation,
-    dateOfBirth: req.body.dateOfBirth,
-    emailAddress: req.body.emailAddress,
-    phoneNumber: req.body.phoneNumber,
-    imageUri:
-      url.pathToFileURL(
-        __dirname + "/resources/userImage/" + req.body.username
-      ) + ".jpg",
-    imageType: req.body.imageType,
-    imageName: req.body.imageName,
-  });
-
-  console.log("newUser.imageuri is" + newUser.imageUri);
-
-  // Create the new user and saving to db
-  newUser.save(function (error, result) {
-    // If there are any errors, pass them to next in the correct format
-    if (error) {
-      console.log(error);
-    }
-    // Send the login if no issues
-    res.send(201, result);
-  });
 });
 
 //Create Patient
@@ -180,7 +100,7 @@ app.post("/patients", function (req, res) {
     throw new Error("first name cannot be empty");
   }
 
-  // Creating new user.
+  // Creating new Patient.
   var newPatient = new Patient({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
@@ -224,11 +144,11 @@ app.get("/login", function (req, res, next) {
   );
 });
 
-//find all patients by doctor ID
+//find all patients
 app.get("/patients", function (req, res, next) {
   var collection = db.collection("patients");
   collection
-    .find({ doctorID: req.query.doctorID })
+    .find({ })
     .toArray(function (err, patients) {
       if (patients) {
         res.json(200, patients);
@@ -238,65 +158,15 @@ app.get("/patients", function (req, res, next) {
     });
 });
 
-//Add an appointment
-//Create Patient
-app.post("/appointments", function (req, res) {
-  // changed from createAppointment
-  // console.log("_dirnamee is:"+__dirname)
-  // console.log("filename is:"+__filename)
-  console.log("POST request: login params=>" + JSON.stringify(req.params));
-  console.log("POST request: login body=>" + JSON.stringify(req.body));
-  // Make sure name is defined
-  if (req.body.patientName === undefined) {
-    // If there are any errors, pass them to next in the correct format
-    throw new Error("patientName cannot be empty");
-  }
-  //upload image
-  var des_file = "resources/appointmentAvatar/" + req.body.patientName + ".jpg";
-  fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
-    fs.writeFile(des_file, data, function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Success!");
-      }
-    });
-  });
+app.get("/patients/:id", function (req, res, next) {
 
-  // Creating new user.
-  var newAppointment = new Appointment({
-    patientName: req.body.patientName,
-    address: req.body.address,
-    doctorID: req.body.doctorID,
-    phoneNumber: req.body.phoneNumber,
-    emailAddress: req.body.emailAddress,
-    appointmentTime: req.body.appointmentTime,
-    patientSymptom: req.body.patientSymptom,
-    imageUri:
-      url.pathToFileURL(
-        __dirname + "/resources/appointmentAvatar/" + req.body.patientName
-      ) + ".jpg",
-  });
+  var ObjectId = require('mongodb').ObjectId; 
+  var collection = db.collection("patients");
 
-  // Create the new user and saving to db
-  newAppointment.save(function (error, result) {
-    // If there are any errors, pass them to next in the correct format
-    if (error) {
-      console.log(error);
-    }
-    // Send the login if no issues
-    res.send(201, result);
-  });
-});
-
-//find all appointments by doctor ID
-app.get("/appointments", function (req, res, next) {
-  var collection = db.collection("appointments");
-  collection
-    .find({ doctorID: req.query.doctorID })
-    .toArray(function (err, appointments) {
-      if (appointments) {
-        res.json(200, appointments);
+  collection.find({_id: new ObjectId(req.params.id)}).toArray(function (err, patients) {
+      if (patients) {
+        console.log("FETCH OK for patient " + req.params.id);
+        res.json(200, patients);
       } else {
         res.send(404);
       }
