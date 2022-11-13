@@ -1,4 +1,3 @@
-//express_demo.js 文件
 var express = require("express");
 var fs = require("fs");
 var multer = require("multer");
@@ -87,19 +86,10 @@ var Treatment = mongoose.model("Treatment", treatmentSchema);
 
 
 if (typeof ipaddress === "undefined") {
-  //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-  //  allows us to run/test the app locally.
-  console.warn("No process.env.IP var, using default: " + DEFAULT_HOST);
   ipaddress = DEFAULT_HOST;
 }
 
-// if (typeof port === "undefined") {
-//   console.warn('No process.env.PORT var, using default port: ' + DEFAULT_PORT);
-//   port = DEFAULT_PORT;
-// };
-
 var server = app.listen(app.get("port"), function () {
-  //port 5000
 
   var host = server.address().address;
   var port = server.address().port;
@@ -113,9 +103,6 @@ app.get("/", function (req, res) {
 //Add Patient Info
 //*********************/
 app.post("/patients", function (req, res) {
-  //changed from createPatient
-  // console.log("_dirnamee is:"+__dirname)
-  // console.log("filename is:"+__filename)
   console.log("POST request: login params=>" + JSON.stringify(req.params));
   console.log("POST request: login body=>" + JSON.stringify(req.body));
   // Make sure name is defined
