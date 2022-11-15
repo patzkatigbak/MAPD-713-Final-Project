@@ -330,7 +330,7 @@ server.get('/critical-patients', async function(req, res, next) {
       let patientDetail = {}
       patientDetail.reason = ''
       for (let clinicalData of clinicalDatas) {
-          switch (clinicalData.category) {
+          switch (String(clinicalData.category)) {
               case "Blood pressure":
                   patientDetail.blood_pressure = clinicalData.readings
                   if (clinicalData.readings > 120) {
