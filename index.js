@@ -315,3 +315,71 @@ app.get("/patients/:id", function (req, res, next) {
       }
     });
 });
+
+// List all patients in critical condition
+server.get('/critical-patients', async function(req, res, next) {
+  console.log('Received GET request: /critical-patients')
+
+  // List all patients
+  let patients = await Patient.find({})
+      .exec()
+  let response = []
+  for (let patient of patients) {
+      let clinicalDatas = await Tests.find({ patient_id: patient._id }).exec()
+      let isInCriticalCondition = false
+      let patientDetail = {}
+      patientDetail.reason = ''
+      for (let clinicalData of clinicalDatas) {
+          switch (clinicalData.category) {
+              case "Blood pressure":
+                  patientDetail.blood_pressure = clinicalData.readings
+                  if (clinicalData.readings > 120) {
+                      isInCriticalCondition = true
+                      patientDetail.reason = patientDetail.reason + 'blood pressure > 120 mmHg;'
+                  }
+                  break
+
+              case "Respiratory rate":
+                  patientDetail.respiratory_rate = clinicalData.readings
+                  if (clinicalData.readings < 12) {
+                      isInCriticalCondition = true
+                      patientDetail.reason = patientDetail.reason + 'respiratory rate < 12 per min;'
+                  }
+                  else if (clinicalData.readings > 25) {
+                      isInCriticalCondition = true
+                      patientDetail.reason = patientDetail.reason + 'respiratory rate > 25 per min;'
+                  }
+                  break
+
+              case "Heart beat rate":
+                  patientDetail.heart_beat_rate = clinicalData.readings
+                  if (clinicalData.readings > 200) {
+                      isInCriticalCondition = true
+                      patientDetail.reason = patientDetail.reason + 'eart beat rate > 200 per min;'
+                  }
+                  break
+
+              case "Blood oxygen level":
+                  patientDetail.blood_oxygen_level = clinicalData.readings
+                  if (clinicalData.readings <= 88) {
+                      isInCriticalCondition = true
+                      patientDetail.reason = patientDetail.reason + 'blood oxygen level <= 88%;'
+                  }
+                  break
+              default:
+                  break
+          }
+      }
+
+      if (isInCriticalCondition) {
+          patientDetail.reason = patientDetail.reason.slice(0, -1) // remove the tailing ';'
+          patientDetail.patient_id = patient._id
+          patientDetail.first_name = patient.first_name
+          patientDetail.last_name = patient.last_name
+          response.push(patientDetail)
+      }
+  }
+
+  console.log('Respond GET request: /critical-patients')
+  res.send(response)
+})
