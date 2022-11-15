@@ -317,7 +317,7 @@ app.get("/patients/:id", function (req, res, next) {
 });
 
 // List all patients in critical condition
-server.get('/critical-patients', async function(req, res, next) {
+app.get('/critical-patients', async function(req, res, next) {
   console.log('Received GET request: /critical-patients')
 
   // List all patients
@@ -330,7 +330,7 @@ server.get('/critical-patients', async function(req, res, next) {
       let patientDetail = {}
       patientDetail.reason = ''
       for (let clinicalData of clinicalDatas) {
-          switch (clinicalData.category) {
+        switch (String(clinicalData.category)) {
               case "Blood pressure":
                   patientDetail.blood_pressure = clinicalData.readings
                   if (clinicalData.readings > 120) {
@@ -367,6 +367,7 @@ server.get('/critical-patients', async function(req, res, next) {
                   }
                   break
               default:
+                console.log('Went to Default')
                   break
           }
       }
