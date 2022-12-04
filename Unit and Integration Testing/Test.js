@@ -3,7 +3,7 @@ let chaiHttp = require('chai-http');
 var expect  = require('chai').expect;
 var request = require('request');
 let shouuld = chai.should();
-var serverURL = 'https://lit-castle-65770.herokuapp.com';
+var serverURL = 'https://mapd714server.onrender.com';
 var patientID  = '638547589e42b988924fba0c';
 var mongoose = require("mongoose");
 
@@ -31,17 +31,17 @@ const patientSchema = new mongoose.Schema({
 
 /**Patient Use Case and Methods Testing */
 /**Get All Patient */
-describe('Get All Patient - https://lit-castle-65770.herokuapp.com/patients', () => {
+describe('Get All Patient - https://mapd714server.onrender.com/patients', () => {
 
     it('Using Correct Url - Response from server should be 200', function(done) {
-        request('https://lit-castle-65770.herokuapp.com/patients' , function(error, response, body) {
+        request('https://mapd714server.onrender.com/patients' , function(error, response, body) {
             expect(response.statusCode).to.equal(200);
             done();
         });
     });
 
     it('Response code should be 200', function(done) {
-        chai.request('https://lit-castle-65770.herokuapp.com')
+        chai.request('https://mapd714server.onrender.com')
         .get('/patients')
         .end((err,res) => {
             res.should.have.status(200)
@@ -70,7 +70,7 @@ describe('Get All Patient - https://lit-castle-65770.herokuapp.com/patients', ()
 });
 
 /**Get Single Patient by ID */
-describe('Get Single Patient by ID - https://lit-castle-65770.herokuapp.com/patients/:id', () => {
+describe('Get Single Patient by ID - https://mapd714server.onrender.com/patients/:id', () => {
     it('Using Correct Url - Response from server should be 200', function(done) {
         request(serverURL +'/patients/'+patientID , function(error, response, body) {
             expect(response.statusCode).to.equal(200);
@@ -109,7 +109,7 @@ describe('Get Single Patient by ID - https://lit-castle-65770.herokuapp.com/pati
 
 
 /**Get Tests by Patient ID */
-describe('Get Test by Patient ID - https://lit-castle-65770.herokuapp.com/patients/:id/tests', () => {
+describe('Get Test by Patient ID - https://mapd714server.onrender.com/patients/:id/tests', () => {
     it('Using Correct Url - Response from server should be 200', function(done) {
         request(serverURL +'/patients/'+patientID+'/tests' , function(error, response, body) {
             expect(response.statusCode).to.equal(200);
@@ -138,7 +138,7 @@ describe('Get Test by Patient ID - https://lit-castle-65770.herokuapp.com/patien
 });
 
 /**Get Treatment by Patient ID */
-describe('Get Treatment by Patient ID - https://lit-castle-65770.herokuapp.com/patients/:id/treatment', () => {
+describe('Get Treatment by Patient ID - https://mapd714server.onrender.com/patients/:id/treatment', () => {
     it('Using Correct Url - Response from server should be 200', function(done) {
         request(serverURL +'/patients/'+patientID+'/treatment' , function(error, response, body) {
             expect(response.statusCode).to.equal(200);
