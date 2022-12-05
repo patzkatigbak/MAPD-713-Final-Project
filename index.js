@@ -172,7 +172,7 @@ app.post("/login", function (req, res) {
 //*********************/
 //Add Patient Treatment using patient id
 //*********************/
-app.post("/patients/:id/treatment", function (req, res) {
+app.post("/patients/:id/treatments", function (req, res) {
   // Creating new Treatment.
   var newTreatment = new Treatment({
     patient_id: req.params.id,
@@ -252,7 +252,7 @@ app.get("/patients/:id/tests", function (req, res, next) {
 //*********************/
 //Get Treatments by patient ID
 //*********************/
-app.get("/patients/:id/treatment", function (req, res, next) {
+app.get("/patients/:id/treatments", function (req, res, next) {
   var collection = db.collection("treatments");
   collection
     .find({patient_id: req.params.id })
@@ -355,7 +355,7 @@ app.get('/critical-patients', async function(req, res, next) {
                   patientDetail.heart_beat_rate = clinicalData.readings
                   if (clinicalData.readings > 200) {
                       isInCriticalCondition = true
-                      patientDetail.reason = patientDetail.reason + 'eart beat rate > 200 per min;'
+                      patientDetail.reason = patientDetail.reason + 'heart beat rate > 200 per min;'
                   }
                   break
 
