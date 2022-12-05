@@ -16,7 +16,7 @@ app.use(
 );
 
 // var DEFAULT_PORT = 5000
-var DEFAULT_HOST = "127.0.0.1";
+var DEFAULT_HOST = "https://patsurikukoserver.herokuapp.com/"
 var SERVER_NAME = "patientApp";
 
 // var http = require('http');
